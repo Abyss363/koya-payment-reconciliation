@@ -10,20 +10,15 @@ from datetime import datetime
 total = 0.0
 count = 0
 transactions = {}
-skipped_lines = 0
-no_txn_id = 0
 
 with open("payments.jsonl") as f:
     for line in f:
         try:
             event = json.loads(line)
         except json.JSONDecodeError:
-            skipped_lines += 1
-            print(repr(line))
             continue
         if event.get("txn_id") is None:
             #skip lines with no transaction id
-            no_txn_id += 1
             continue
         if event.get("txn_id") not in transactions:
             #keep all new transactions
@@ -50,10 +45,6 @@ for row in transactions.values():
         count += 1
         
 
-
-print(f"Skipped Lines: {skipped_lines}")
-print(f"Lines with no txn Id: {no_txn_id}")
-print(len(transactions))
 
 with open("expected.txt") as f:
     expected = int(f.read().strip())
